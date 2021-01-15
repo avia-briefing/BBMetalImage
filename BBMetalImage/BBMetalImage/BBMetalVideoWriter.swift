@@ -106,7 +106,9 @@ public class BBMetalVideoWriter {
         descriptor.usage = [.shaderRead, .shaderWrite]
         outputTexture = BBMetalDevice.sharedDevice.makeTexture(descriptor: descriptor)
         
-        threadgroupSize = MTLSize(width: 16, height: 16, depth: 1)
+        let width = computePipeline.threadExecutionWidth
+        let height = computePipeline.maxTotalThreadsPerThreadgroup / width
+        threadgroupSize = MTLSize(width: width, height: height, depth: 1)
         threadgroupCount = MTLSize(width: (frameSize.width + threadgroupSize.width - 1) / threadgroupSize.width,
                                    height: (frameSize.height + threadgroupSize.height - 1) / threadgroupSize.height,
                                    depth: 1)

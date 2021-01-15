@@ -128,7 +128,9 @@ open class BBMetalBaseFilter: BBMetalImageSource, BBMetalImageConsumer {
             let kernelFunction = library.makeFunction(name: kernelFunctionName) {
             computePipeline = try? BBMetalDevice.sharedDevice.makeComputePipelineState(function: kernelFunction)
         }
-        threadgroupSize = MTLSize(width: 16, height: 16, depth: 1)
+        let width = computePipeline.threadExecutionWidth
+        let height = computePipeline.maxTotalThreadsPerThreadgroup / width
+        threadgroupSize = MTLSize(width: width, height: height, depth: 1)
         _runSynchronously = false
         completions = []
         lock = DispatchSemaphore(value: 1)
